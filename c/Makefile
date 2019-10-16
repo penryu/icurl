@@ -2,7 +2,7 @@
 BIN = icurl
 PRODUCTS = $(BIN) $(BIN).dSYM
 CFLAGS += -g -O0 -Werror -Wall -Wextra -Wconversion -pedantic -fno-builtin
-LIBS = -lcurl
+LDFLAGS += -lcurl
 
 # Targets
 all: $(BIN)
@@ -15,6 +15,3 @@ test: $(BIN)
 
 clean:
 	rm -rf $(PRODUCTS)
-
-$(BIN): $(BIN).c
-	$(CC) $(CFLAGS) -o $(BIN) $(BIN).c $(LIBS)
