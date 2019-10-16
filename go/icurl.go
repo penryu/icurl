@@ -1,6 +1,6 @@
 package main
 
-// #cgo CFLAGS: -g -O0 -Werror -Wconversion -pedantic
+// #cgo CFLAGS: -g -O0 -Wconversion -pedantic
 // #cgo LDFLAGS: -lcurl
 // #include <stdlib.h>
 // #include <string.h>
@@ -8,7 +8,7 @@ package main
 //
 // char *go2cstr(_GoString_ s) {
 //     size_t len = _GoStringLen(s);
-//     char *p = malloc(len + 1);
+//     char *p = malloc(len + 1U);
 //     memcpy(p, _GoStringPtr(s), len);
 //     p[len] = '\0';
 //     return p;
