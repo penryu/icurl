@@ -1,17 +1,13 @@
-# Macros
 BIN = icurl
-PRODUCTS = $(BIN) $(BIN).dSYM
-CFLAGS += -g -O0 -Werror -Wall -Wextra -Wconversion -pedantic -fno-builtin
-LDFLAGS += -lcurl
+FETCH_DIR = ../fetch
+CFLAGS += -Werror -Wall -Wextra -Wconversion -pedantic -fno-builtin -I $(FETCH_DIR)
+LDFLAGS += -lfetch -L $(FETCH_DIR)
 
-# Targets
 all: $(BIN)
+	cp $(FETCH_DIR)/libfetch* .
 
-install: $(BIN)
-	install -s $(BIN) /usr/local/bin/$(BIN)
-
-test: $(BIN)
-	./$(BIN)
+run: $(BIN)
+	LD_LIBRARY_PATH=$(FETCH_DIR) ./$(BIN)
 
 clean:
-	rm -rf $(PRODUCTS)
+	rm -rf $(BIN) $(BIN).dSYM *.ico

@@ -1,2 +1,4 @@
 icurl
 *.dSYM/
+*.dylib
+.vscode/
