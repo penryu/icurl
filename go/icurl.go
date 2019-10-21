@@ -1,9 +1,7 @@
 package main
 
-// #include "../fetch/fetch.h"
-
-// #cgo CFLAGS: -g -O0 -Wconversion -pedantic -I ../fetch
-// #cgo LDFLAGS: -L ../fetch -lfetch -lcurl
+// #cgo CFLAGS: -pedantic -I ../include
+// #cgo LDFLAGS: -Wl,-rpath=../lib -L ../lib -lfetch
 // #include <stdlib.h>
 // #include <string.h>
 // #include "fetch.h"

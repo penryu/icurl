@@ -1,13 +1,14 @@
 BIN = icurl
-FETCH_DIR = ../fetch
-CFLAGS += -Werror -Wall -Wextra -Wconversion -pedantic -fno-builtin -I $(FETCH_DIR)
-LDFLAGS += -lfetch -L $(FETCH_DIR)
+LIB_PATH = ../lib
+INCLUDE_PATH = ../include
+CFLAGS += -Werror -Wall -Wextra -Wconversion -pedantic -fno-builtin
+CFLAGS += -I $(INCLUDE_PATH)
+LDFLAGS += -Wl,-rpath=$(LIB_PATH) -L $(LIB_PATH) -lfetch
 
 all: $(BIN)
-	cp $(FETCH_DIR)/libfetch* .
 
 run: $(BIN)
-	LD_LIBRARY_PATH=$(FETCH_DIR) ./$(BIN)
+	./$(BIN)
 
 clean:
 	rm -rf $(BIN) $(BIN).dSYM *.ico

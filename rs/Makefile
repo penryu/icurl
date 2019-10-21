@@ -1,12 +1,13 @@
 BIN = icurl
 
 all: $(BIN)
+
 run: $(BIN)
 	./$(BIN)
+
 clean:
-	rm -rf $(BIN) *.ico *.o libfetch*
+	rm -rf $(BIN) *.ico *.o
 
 $(BIN):
-	rm -f libfetch*
-	ln -sf ../fetch/libfetch* .
-	rustc main.rs -o $(BIN) -L ../fetch
+	rustc main.rs -o $(BIN) -L ../lib \
+	  -C link_args='-Wl,-rpath=../lib'

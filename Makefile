@@ -1,15 +1,16 @@
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-  LIB := lib$(NAME).dylib
-else
-  LIB := lib$(NAME).o
-endif
-
-SUBS = fetch c go rs
+LIBS = fetch
+BINS = c go rs
 
 all:
-	for dir in $(SUBS); do make -C $$dir all; done
-run:
-	for dir in $(SUBS); do make -C $$dir run; done
+	for lib in $(LIBS); do make -C $$lib install; done
+	for bin in $(BINS); do make -C $$bin run; done
+run: all
+
+test:
+	for 
+uninstall: clean
+	make -C fetch uninstall
+
 clean:
-	for dir in $(SUBS); do make -C $$dir clean; done
+	for dir in $(LIBS) $(BINS); do make -C $$dir clean; done
+
