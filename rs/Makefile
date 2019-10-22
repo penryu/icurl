@@ -6,8 +6,7 @@ run: $(BIN)
 	./$(BIN)
 
 clean:
-	rm -rf $(BIN) *.ico *.o
+	rm -rf $(BIN) *.o curled
 
 $(BIN):
-	rustc main.rs -o $(BIN) -L ../lib \
-	  -C link_args='-Wl,-rpath=../lib'
+	rustc main.rs -o $(BIN)

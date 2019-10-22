@@ -1,40 +1,75 @@
 package main
 
-// #cgo CFLAGS: -pedantic -I ../include
-// #cgo LDFLAGS: -Wl,-rpath=../lib -L ../lib -lfetch
+import (
+	"fmt"
+	"unsafe"
+)
+
+// #cgo CFLAGS: -pedantic
+// #cgo LDFLAGS: -lcurl
+// #include <curl/curl.h>
 // #include <stdlib.h>
-// #include <string.h>
-// #include "fetch.h"
+// #include <sys/utsname.h>
 //
-// char *go2cstr(_GoString_ s) {
-//     size_t len = _GoStringLen(s);
-//     char *p = malloc(len + 1U);
-//     memcpy(p, _GoStringPtr(s), len);
-//     p[len] = '\0';
-//     return p;
-// }
+// const char *file_mode = "w";
 //
-// size_t fetch_wrapper(_GoString_ goURL, _GoString_ goFilename) {
-//     char *url = go2cstr(goURL);
-//     char *filename = go2cstr(goFilename);
-//     size_t bytesRead = fetch(url, filename);
-//     free(url);
-//     free(filename);
-//     return bytesRead;
+// CURLcode curl_fetch(CURL *easy, const char *url, FILE *fp) {
+//     curl_easy_setopt(easy, CURLOPT_URL, url);
+//     curl_easy_setopt(easy, CURLOPT_FOLLOWLOCATION, 1L);
+//     curl_easy_setopt(easy, CURLOPT_WRITEDATA, fp);
+//     return curl_easy_perform(easy);
 // }
 import "C"
 
+func display_uname() {
+	var buf C.struct_utsname
+
+	status, err := C.uname(&buf)
+	if status < 0 {
+		// Go can't access errno itself.
+		// Use a helper function to get error as a C string.
+		fmt.Println("failed to get system data", err)
+		return
+	}
+
+	nodename := C.GoString(&buf.nodename[0])
+	sysname := C.GoString(&buf.sysname[0])
+	release := C.GoString(&buf.release[0])
+
+	fmt.Printf("Host %s is running %s %s\n",
+		nodename, sysname, release)
+}
+
+func fetch_file() {
+	url := "https://curl.haxx.se/favicon.ico"
+	c_url := C.CString(url)
+
+	filename := "curled"
+	c_filename := C.CString(filename)
+
+	fmt.Println("Opening file", filename, "...")
+
+	// open file for libcurl to write to it
+	fp, err := C.fopen(c_filename, C.file_mode)
+	if nil == fp {
+		fmt.Println("failed to open file:", filename, ":", err)
+		return
+	}
+
+	fmt.Println("Fetching url", url, "...")
+
+	// init and configure curl runtime
+	C.curl_global_init(C.CURL_GLOBAL_ALL)
+	curl := C.curl_easy_init()
+	C.curl_fetch(curl, c_url, fp)
+	C.curl_easy_cleanup(curl)
+	C.curl_global_cleanup()
+
+	C.free(unsafe.Pointer(c_filename))
+	C.free(unsafe.Pointer(c_url))
+}
+
 func main() {
-	urls := map[string]string{
-		"https://apple.com/favicon.ico":  "apple.ico",
-		"https://google.com/favicon.ico": "google.ico",
-	}
-
-	C.fetch_init()
-
-	for url, filename := range urls {
-		C.fetch_wrapper(url, filename)
-	}
-
-	C.fetch_cleanup()
+	display_uname()
+	fetch_file()
 }
